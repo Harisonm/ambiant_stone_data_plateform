@@ -48,7 +48,7 @@ deploy:
     - gcloud auth activate-service-account --key-file gcloud-service-key.json # Activate your service account
     - gcloud config set project $GCP_PROJECT_ID #Set the GCP Project ID to the variable name
     - gcloud auth configure-docker # Configure docker environment
-    - gcloud builds submit --substitutions=_SERVICE_NAME="${SERVICE_NAME}",_GCP_PROJECT_ID="${GCP_PROJECT_ID}",_GCP_REGION="${GCP_REGION}",_REPOSITORY="${REPOSITORY}",_DBT_SERVICE_ACCOUNT="${DBT_SERVICE_ACCOUNT_PROD}" --region=europe-west1
+    - gcloud builds submit --config=2-dbt/cloudbuild.yaml --substitutions=_SERVICE_NAME="${SERVICE_NAME}",_GCP_PROJECT_ID="${GCP_PROJECT_ID}",_GCP_REGION="${GCP_REGION}",_REPOSITORY="${REPOSITORY}",_DBT_SERVICE_ACCOUNT="${DBT_SERVICE_ACCOUNT_PROD}" --region=europe-west1
   needs:
     - job: get_dbt_variables
       artifacts: true
