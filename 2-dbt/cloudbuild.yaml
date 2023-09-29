@@ -20,7 +20,7 @@ steps:
             '--build-arg', 'DBT_PROJECT_ID=${_DBT_PROJECT_ID}',
             '--build-arg', 'GOOGLE_APPLICATION_CREDENTIALS=${_DBT_SERVICE_ACCOUNT}',
             '--tag=$_GCP_REGION-docker.pkg.dev/$_GCP_PROJECT_ID/$_REPOSITORY/$_SERVICE_NAME:latest',
-            '--file=2-dbt/Dockerfile',
+            '--file=Dockerfile',
             '.']
 
   - name: 'gcr.io/cloud-builders/docker'
