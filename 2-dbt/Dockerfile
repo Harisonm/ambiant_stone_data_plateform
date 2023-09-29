@@ -23,7 +23,7 @@ RUN apt-get update -y && \
 
 USER root
 
-COPY $DBT_PROJECT_DIR .
+COPY 2-dbt/$DBT_PROJECT_DIR .
 
 WORKDIR $DBT_PROJECT_DIR
 
