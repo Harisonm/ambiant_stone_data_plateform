@@ -1,0 +1,25 @@
+kube_bq_jobs:
+  outputs:
+    dev:
+      type: bigquery
+      method: service-account
+      project: "{{ env_var('BQ_PROJECT_ID') }}"
+      dataset: "{{ env_var('BQ_DATASET') }}"
+      location: "{{ env_var('BQ_LOCATION') }}"
+      threads: 4
+      keyfile: "profiles/big_query/gcloud-service-key.json"
+      priority: interactive
+      timeout_seconds: 500
+      job_retries: 1
+    prod: # your production environment
+      type: bigquery
+      method: service-account
+      project: "{{ env_var('BQ_PROJECT_ID') }}"
+      dataset: "{{ env_var('BQ_DATASET') }}"
+      location: "{{ env_var('BQ_LOCATION') }}"
+      threads: 4
+      keyfile: "profiles/big_query/gcloud-service-key.json"
+      timeout_seconds: 300
+      priority: interactive
+      retries: 1
+  target: dev

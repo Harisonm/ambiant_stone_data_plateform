@@ -1,0 +1,48 @@
+name: Docker
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+jobs:
+    deploy:
+        name: Setup dbt Plateform
+        runs-on: ubuntu-latest
+        env:
+          IMAGE_NAME: ${{ secrets.GKE_REGION }}-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/${{ secrets.REPOSITORY }}/${{ secrets.GCP_APP_NAME }}:latest
+        steps:
+
+        - name: Login
+          uses: google-github-actions/setup-gcloud@v1
+          with:
+            project_id: ${{ secrets.GCP_PROJECT_ID }}
+            service_account_email: ${{ secrets.GCP_DBT_EMAIL }}
+            service_account_key: ${{ secrets.GCP_DBT_CREDENTIALS }}
+
+        - name: Checkout repository
+          uses: actions/checkout@v3
+
+        # Configure Workload Identity Federation and generate an access token.
+        - id: 'auth'
+          name: 'Authenticate to Google Cloud'
+          uses: 'google-github-actions/auth@v1'
+          with:
+            credentials_json: '${{ secrets.GCP_DBT_CREDENTIALS }}'
+            registry: '${{ secrets.GCP_REGION }}-docker.pkg.dev'
+        - run: |-
+            gcloud components install gke-gcloud-auth-plugin
+            gcloud auth configure-docker ${{ secrets.GCP_REGION }}-docker.pkg.dev --quiet
+            gcloud container clusters get-credentials ${{ secrets.GKE_CLUSTER_NAME }} --region ${{ secrets.GKE_REGION }} --project ${{ secrets.GCP_PROJECT_ID }}
+            export USE_GKE_GCLOUD_AUTH_PLUGIN=True
+        # This example runs "docker login" directly to Artifact Registry.
+
+        - name: Build Docker image
+          run: docker build -t $IMAGE_NAME -f 2-dbt/Dockerfile .
+
+        - name: Push Docker image
+          run: docker push $IMAGE_NAME
+
+        - name: Deploy dbt apps
+          run: |-
+            cd 2-dbt/kubernetes/helm/dbt-bigquery && helm upgrade --install --atomic dbt -f values.yaml -n dbt . --create-namespace
