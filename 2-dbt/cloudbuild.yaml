@@ -3,7 +3,7 @@ substitutions:
     _GCP_PROJECT_ID: "${GCP_PROJECT_ID}"
     _GCP_REGION: "${GCP_REGION}"
     _REPOSITORY: "${REPOSITORY}"
-    _DBT_PROJECT_DIR: "2-dbt/src"
+    _DBT_PROJECT_DIR: "src"
     _DBT_SERVICE_ACCOUNT: "${DBT_SERVICE_ACCOUNT_PROD}"
 
 options:
