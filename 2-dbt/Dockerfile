@@ -20,13 +20,13 @@ ENV DBT_TYPE="service_account"
 RUN apt-get update -y && \
     apt-get upgrade -y && \
     apt-get install -y git
-
 USER root
 
-COPY 2-dbt/$DBT_PROJECT_DIR .
+COPY . .
 
-WORKDIR $DBT_PROJECT_DIR
+RUN echo $GOOGLE_APPLICATION_CREDENTIALS > profiles/big_query/gcloud-service-key.json
 
-ENV DBT_PROFILES_DIR $DBT_PROJECT_DIR/profiles/big_query/
+ENV DBT_PROFILES_DIR profiles/big_query/
 
-RUN echo $GOOGLE_APPLICATION_CREDENTIALS > $DBT_PROJECT_DIR/profiles/big_query/gcloud-service-key.json
+# RUN ["dbt", "deps"]
+ENTRYPOINT ["dbt"]
