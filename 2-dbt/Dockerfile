@@ -1,5 +1,32 @@
-FROM  ghcr.io/dbt-labs/dbt-bigquery:latest
+# temp stage
+FROM python:3.11-slim AS builder
 
+ENV PYTHONDONTWRITEBYTECODE 1
+ENV PYTHONUNBUFFERED 1
+
+# install dbt
+ENV DBT_VERSION=1.1.1
+ENV DEBIAN_FRONTEND=noninteractive
+
+RUN apt-get update -y && \
+    apt-get upgrade -y && \
+    apt-get install -y --no-install-recommends gcc && \
+    apt-get install -y git
+
+RUN python -m venv /opt/venv
+ENV PATH="/opt/venv/bin:$PATH"
+
+
+RUN apt-get update -y && \
+    apt-get upgrade -y
+
+ENV DBT_DIR /src
+WORKDIR $DBT_DIR
+COPY src/requirements.txt .
+RUN pip install -r requirements.txt
+
+# final stage
+FROM python:3.11-slim AS stage
 # define in docker build
 ARG BQ_PROJECT_ID
 ARG BQ_DATASET
@@ -20,22 +47,30 @@ ENV DBT_TYPE="service_account"
 RUN apt-get update -y && \
     apt-get upgrade -y && \
     apt-get install -y git
+RUN addgroup --gid 1001 --system dbt_app && \
+    adduser --no-create-home --shell /bin/false --disabled-password --uid 1001 --system --group dbt_app
 
+USER dbt_app
 
-# RUN addgroup --gid 1001 --system dbt_app && \
-#     adduser --no-create-home --shell /bin/false --disabled-password --uid 1001 --system --group dbt_app
+COPY --from=builder /opt/venv /opt/venv
+# Set environment variables and working directory
 
-# Copy dbt project in the docker image to build
-# COPY --chown=dbt_app:dbt_app $DBT_PROJECT_DIR .
+ENV DBT_DIR /src
+COPY --chown=dbt_app:dbt_app . .
+WORKDIR $DBT_DIR
+USER dbt_app
 
-# Use dbt_app to avoid permission issues
-USER root
+ENV DBT_PROFILES_DIR $DBT_DIR/profiles/big_query/
 
-COPY $DBT_PROJECT_DIR .
-
-WORKDIR $DBT_PROJECT_DIR
-
-ENV DBT_PROFILES_DIR $DBT_PROJECT_DIR/profiles/big_query/
 # Use root to avoid permission issues
 # RUN dbt debug --target=$TARGET --profiles-dir profiles/big_query
-RUN echo $GOOGLE_APPLICATION_CREDENTIALS > $DBT_PROJECT_DIR/profiles/big_query/gcloud-service-key.json
+RUN echo $GOOGLE_APPLICATION_CREDENTIALS > $DBT_DIR/profiles/big_query/gcloud-service-key.json
+
+RUN mkdir -p target
+RUN chown dbt_app:dbt_app -R $DBT_DIR/
+RUN chmod -R 775 $DBT_DIR/
+
+ENV PATH="/opt/venv/bin:$PATH"
+RUN ["dbt", "deps"]
+ENTRYPOINT ["dbt"]
+
