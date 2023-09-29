@@ -21,22 +21,12 @@ RUN apt-get update -y && \
     apt-get upgrade -y && \
     apt-get install -y git
 
-# RUN addgroup --gid 1001 --system dbt_app && \
-#     adduser --no-create-home --shell /bin/false --disabled-password --uid 1001 --system --group dbt_app
-
-# Copy dbt project in the docker image to build
-# COPY --chown=dbt_app:dbt_app $DBT_PROJECT_DIR .
-
-# Use dbt_app to avoid permission issues
 USER root
 
-COPY $DBT_PROJECT_DIR /usr/app/
+COPY $DBT_PROJECT_DIR .
 
-ENV DBT_PROFILES_DIR usr/app/$DBT_PROJECT_DIR/profiles/big_query/
-# Use root to avoid permission issues
-# RUN dbt debug --target=$TARGET --profiles-dir profiles/big_query
-RUN echo $GOOGLE_APPLICATION_CREDENTIALS > /usr/app/$DBT_PROJECT_DIR/profiles/big_query/gcloud-service-key.json
+WORKDIR $DBT_PROJECT_DIR
 
-USER root
+ENV DBT_PROFILES_DIR $DBT_PROJECT_DIR/profiles/big_query/
 
-RUN dbt debug --target=$TARGET
+RUN echo $GOOGLE_APPLICATION_CREDENTIALS > $DBT_PROJECT_DIR/profiles/big_query/gcloud-service-key.json
