@@ -35,7 +35,7 @@ COPY $DBT_PROJECT_DIR .
 
 WORKDIR $DBT_PROJECT_DIR
 
-ENV DBT_PROFILES_DIR profiles/big_query/
+ENV DBT_PROFILES_DIR $DBT_PROJECT_DIR/profiles/big_query/
 # Use root to avoid permission issues
 # RUN dbt debug --target=$TARGET --profiles-dir profiles/big_query
-RUN echo $GOOGLE_APPLICATION_CREDENTIALS > profiles/big_query/gcloud-service-key.json
+RUN echo $GOOGLE_APPLICATION_CREDENTIALS > $DBT_PROJECT_DIR/profiles/big_query/gcloud-service-key.json
