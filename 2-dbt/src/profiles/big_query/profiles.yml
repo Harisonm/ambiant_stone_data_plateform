@@ -7,7 +7,7 @@ kube_bq_jobs:
       dataset: "{{ env_var('BQ_DATASET') }}"
       location: "{{ env_var('BQ_LOCATION') }}"
       threads: 4
-      keyfile: "profiles/big_query/gcloud-service-key.json"
+      keyfile: "/usr/app/{{ env_var('DBT_PROJECT_DIR') }}/profiles/big_query/gcloud-service-key.json"
       priority: interactive
       timeout_seconds: 500
       job_retries: 1
@@ -18,7 +18,7 @@ kube_bq_jobs:
       dataset: "{{ env_var('BQ_DATASET') }}"
       location: "{{ env_var('BQ_LOCATION') }}"
       threads: 4
-      keyfile: "profiles/big_query/gcloud-service-key.json"
+      keyfile: "/usr/app/{{ env_var('DBT_PROJECT_DIR') }}/profiles/big_query/gcloud-service-key.json"
       timeout_seconds: 300
       priority: interactive
       retries: 1
