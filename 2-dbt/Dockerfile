@@ -18,9 +18,7 @@ RUN apt-get update -y && \
     apt-get upgrade -y && \
     apt-get install -y git
 
-RUN echo $GOOGLE_APPLICATION_CREDENTIALS > profiles/big_query/gcloud-service-key.json
 
-ENV DBT_PROFILES_DIR usr/app/profiles/big_query/
 ENV GOOGLE_APPLICATION_CREDENTIALS=/usr/app/auth/gcp-service-account.json
 ENV TARGET=prod
 
@@ -29,6 +27,8 @@ USER root
 # Copy dbt project in the docker image to build
 COPY $DBT_PROJECT_DIR /usr/app/
 COPY auth /usr/app/auth/
+
+ENV DBT_PROFILES_DIR usr/app/profiles/big_query/
 
 # Use root to avoid permission issues
 USER root
