@@ -23,11 +23,11 @@ RUN apt-get update -y && \
     
 USER root
 
-COPY . .
+COPY $DBT_PROJECT_DIR .
 
 WORKDIR $DBT_PROJECT_DIR
 
-ENV DBT_PROFILES_DIR profiles/big_query/
+ENV DBT_PROFILES_DIR $DBT_PROJECT_DIR/profiles/big_query/
 
 # RUN ["dbt", "deps"]
 ENTRYPOINT ["dbt"]
