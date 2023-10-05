@@ -27,9 +27,7 @@ USER root
 # Copy dbt project in the docker image to build
 COPY . /usr/app/
 
-ENV DBT_PROFILES_DIR usr/app/profiles/big_query/
+ENV DBT_PROFILES_DIR profiles/big_query/
 
 # Use root to avoid permission issues
 USER root
-
-RUN dbt debug --target=$TARGET
