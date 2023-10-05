@@ -36,3 +36,15 @@ steps:
       '--set-env-vars', 'DBT_PROJECT_ID=${_DBT_PROJECT_ID}',
       '--set-env-vars', 'GOOGLE_APPLICATION_CREDENTIALS=${_DBT_SERVICE_ACCOUNT}',
       '--region', '$_GCP_REGION']
+
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
+  entrypoint: gcloud
+  args: [
+    'scheduler', 'jobs', 'create', 'http',
+    'snowplow-dbt-schedule',
+    '--schedule', '23 6-21/3 * * *',
+    '--location', '$_GCP_REGION',
+    '--uri', 'https://$LOCATION-run.googleapis.com/apis/run.googleapis.com/v1/namespaces/$PROJECT_ID/jobs/ambiant-stone-dbt-p:run',   
+    '--http-method', 'POST',
+    '--oauth-service-account-email', '$PROJECT_NUMBER-compute@developer.gserviceaccount.com'
+    ]
