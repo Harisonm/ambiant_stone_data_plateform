@@ -25,7 +25,7 @@ ENV TARGET=prod
 USER root
 
 # Copy dbt project in the docker image to build
-COPY $DBT_PROJECT_DIR /usr/app/
+COPY . /usr/app/
 COPY auth /usr/app/auth/
 
 ENV DBT_PROFILES_DIR usr/app/profiles/big_query/
