@@ -12,22 +12,22 @@ ENV BQ_DATASET=$BQ_DATASET
 
 # default env values, can be overridden
 ENV BQ_LOCATION="europe-west1"
+
+ENV GOOGLE_APPLICATION_CREDENTIALS=$GOOGLE_APPLICATION_CREDENTIALS
 ENV TARGET=prod
+ENV DBT_TYPE="service_account"
 
 RUN apt-get update -y && \
     apt-get upgrade -y && \
     apt-get install -y git
-
-
-ENV GOOGLE_APPLICATION_CREDENTIALS=/usr/app/gcp-service-account.json
-ENV TARGET=prod
-
+    
 USER root
 
-# Copy dbt project in the docker image to build
-COPY . /usr/app/
+COPY $DBT_PROJECT_DIR .
 
-ENV DBT_PROFILES_DIR usr/app/dbt/profiles/big_query/
+WORKDIR $DBT_PROJECT_DIR
 
-# Use root to avoid permission issues
-USER root
+ENV DBT_PROFILES_DIR profiles/big_query/
+
+# RUN ["dbt", "deps"]
+ENTRYPOINT ["dbt"]
