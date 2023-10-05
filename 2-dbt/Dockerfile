@@ -19,14 +19,13 @@ RUN apt-get update -y && \
     apt-get install -y git
 
 
-ENV GOOGLE_APPLICATION_CREDENTIALS=/usr/app/auth/gcp-service-account.json
+ENV GOOGLE_APPLICATION_CREDENTIALS=/usr/app/gcp-service-account.json
 ENV TARGET=prod
 
 USER root
 
 # Copy dbt project in the docker image to build
 COPY . /usr/app/
-COPY auth /usr/app/auth/
 
 ENV DBT_PROFILES_DIR usr/app/profiles/big_query/
 
