@@ -45,4 +45,4 @@ jobs:
 
         - name: Build, Push and Deploy dbt apps
           run: |-
-            gcloud builds submit --config=2-dbt/cloudbuild.yaml --substitutions=_GCP_APP_NAME="${GCP_APP_NAME}",_GCP_PROJECT_ID="${GCP_PROJECT_ID}",_GCP_REGION="${GCP_REGION}",_REPOSITORY="${REPOSITORY}",_DBT_SERVICE_ACCOUNT="${DBT_SERVICE_ACCOUNT_PROD}" --region=europe-west1
+            gcloud builds submit --config=cloudbuild.yaml --substitutions=_GCP_APP_NAME="${GCP_APP_NAME}",_GCP_PROJECT_ID="${GCP_PROJECT_ID}",_GCP_REGION="${GCP_REGION}",_REPOSITORY="${REPOSITORY}",_DBT_SERVICE_ACCOUNT="${DBT_SERVICE_ACCOUNT_PROD}" --region=europe-west1
