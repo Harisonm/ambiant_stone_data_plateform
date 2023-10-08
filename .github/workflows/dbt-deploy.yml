@@ -5,12 +5,20 @@ on:
     branches: [ main ]
   pull_request:
     branches: [ main ]
+
+env:
+  GCP_APP_NAME: ${{ secrets.GCP_APP_NAME }}
+  GCP_PROJECT_ID:  ${{ secrets.GCP_PROJECT_ID }}
+  GCP_SERVICE_ACCOUNT: ${{ secrets.GCP_DBT_CREDENTIALS }}
+  GCP_REGION: ${{ secrets.GCP_REGION }}
+  REPOSITORY: ${{ secrets.REPOSITORY }}
+
 jobs:
     deploy:
         name: Setup dbt Plateform
         runs-on: ubuntu-latest
         env:
-          IMAGE_NAME: ${{ secrets.GKE_REGION }}-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/${{ secrets.REPOSITORY }}/${{ secrets.GCP_APP_NAME }}:latest
+          IMAGE_NAME: ${{ secrets.GCP_REGION }}-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/${{ secrets.REPOSITORY }}/${{ secrets.GCP_APP_NAME }}:latest
         steps:
 
         - name: Login
@@ -33,16 +41,8 @@ jobs:
         - run: |-
             gcloud components install gke-gcloud-auth-plugin
             gcloud auth configure-docker ${{ secrets.GCP_REGION }}-docker.pkg.dev --quiet
-            gcloud container clusters get-credentials ${{ secrets.GKE_CLUSTER_NAME }} --region ${{ secrets.GKE_REGION }} --project ${{ secrets.GCP_PROJECT_ID }}
-            export USE_GKE_GCLOUD_AUTH_PLUGIN=True
         # This example runs "docker login" directly to Artifact Registry.
 
-        - name: Build Docker image
-          run: docker build -t $IMAGE_NAME -f 2-dbt/Dockerfile .
-
-        - name: Push Docker image
-          run: docker push $IMAGE_NAME
-
-        - name: Deploy dbt apps
+        - name: Build, Push and Deploy dbt apps
           run: |-
-            cd 2-dbt/kubernetes/helm/dbt-bigquery && helm upgrade --install --atomic dbt -f values.yaml -n dbt . --create-namespace
+                - gcloud builds submit --config=2-dbt/cloudbuild.yaml --substitutions=_GCP_APP_NAME="${GCP_APP_NAME}",_GCP_PROJECT_ID="${GCP_PROJECT_ID}",_GCP_REGION="${GCP_REGION}",_REPOSITORY="${REPOSITORY}",_DBT_SERVICE_ACCOUNT="${DBT_SERVICE_ACCOUNT_PROD}" --region=europe-west1

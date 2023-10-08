@@ -1,9 +1,9 @@
-name: "kube_bq_jobs"
+name: "bigquery_public_data"
 version: "1.0.0"
 config-version: 2
 
 # This setting configures which "profile" dbt uses for this project.
-profile: "kube_bq_jobs"
+profile: "bigquery_public_data"
 
 model-paths: ["models"]
 macro-paths: ["macros"]
