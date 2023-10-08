@@ -26,6 +26,15 @@ data "google_iam_role" "logging-logWriter" {
   name = "roles/logging.logWriter"
 }
 
+data "google_iam_role" "serviceaccount-TokenCreator" {
+  name = "roles/iam.serviceAccountTokenCreator"
+}
+
+data "google_iam_role" "run-invoker" {
+  name = "roles/run.invoker"
+}
+
+
 # Dedicated SA for DBT workload
 resource "google_service_account" "this" {
   account_id   = var.account_id
@@ -45,7 +54,9 @@ resource "google_project_iam_custom_role" "this" {
       data.google_iam_role.storage-admin.included_permissions,
       data.google_iam_role.artifactregistry-createOnPushRepoAdmin.included_permissions,
       data.google_iam_role.container-developer.included_permissions,
-      data.google_iam_role.logging-logWriter.included_permissions
+      data.google_iam_role.logging-logWriter.included_permissions,
+      data.google_iam_role.serviceaccount-TokenCreator.included_permissions,
+      data.google_iam_role.run-invoker.included_permissions
     ),
     ["resourcemanager.projects.list"]
   )

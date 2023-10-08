@@ -12,6 +12,7 @@ env:
   GCP_SERVICE_ACCOUNT: ${{ secrets.GCP_DBT_CREDENTIALS }}
   GCP_REGION: ${{ secrets.GCP_REGION }}
   REPOSITORY: ${{ secrets.REPOSITORY }}
+  DBT_SERVICE_ACCOUNT_PROD: ${{ secrets.DBT_SERVICE_ACCOUNT_PROD }}
 
 jobs:
     deploy:

@@ -4,20 +4,22 @@ bigquery_public_data:  # your profile name from dbt_project.yml
     
     dev:
       type: bigquery
-      method: oauth
+      method: service-account
       project: ambient-stone-394013  # name of the project in BigQuery
       dataset: sandbox  # your dataset for development (usually your name)
       threads: 4
+      keyfile:"{{ env_var('GOOGLE_APPLICATION_CREDENTIALS') }}"
       timeout_seconds: 300
       priority: interactive
       retries: 1
     
     prod: # your production environment
       type: bigquery
-      method: oauth 
+      method: service-account
       project: ambient-stone-394013  # name of the project in BigQuery
       dataset: ds_edw  # your dataset for production
       threads: 4
+      keyfile: "{{ env_var('GOOGLE_APPLICATION_CREDENTIALS') }}"
       timeout_seconds: 300
       priority: interactive
       retries: 1
