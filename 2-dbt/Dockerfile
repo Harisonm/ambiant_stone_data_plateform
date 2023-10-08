@@ -3,7 +3,7 @@ FROM python:3.10.7-slim-buster AS builder
 # set work directory
 ENV APP_HOME /app
 WORKDIR $APP_HOME
-COPY src ./
+COPY . ./
 # allow statements and log message to immediately appear in the Knative logs
 ENV PYTHONUNBUFFERED True
 # Install production dependencies.
@@ -19,7 +19,7 @@ COPY ./requirements.txt .
 
 RUN pip install --no-cache-dir -r requirements.txt
 # copy project
-COPY src .
+COPY . .
 
 # RUN ["dbt", "deps"]
 ENTRYPOINT ["dbt"]
