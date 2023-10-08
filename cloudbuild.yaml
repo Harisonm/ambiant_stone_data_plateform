@@ -15,7 +15,6 @@ steps:
   - name: 'gcr.io/cloud-builders/docker'
     entrypoint: 'docker'
     args: ['build', 
-            '--build-arg', 'DBT_PROJECT_DIR=${_DBT_PROJECT_DIR}',
             '--build-arg', 'BQ_PROJECT_ID=${_GCP_PROJECT_ID}', 
             '--build-arg', 'DBT_PROJECT_ID=${_DBT_PROJECT_ID}',
             '--build-arg', 'GOOGLE_APPLICATION_CREDENTIALS=${_DBT_SERVICE_ACCOUNT}',
@@ -31,7 +30,6 @@ steps:
     args: [
       'run', 'jobs', 'deploy',
       '$_GCP_APP_NAME', '--image', '$_GCP_REGION-docker.pkg.dev/$_GCP_PROJECT_ID/$_REPOSITORY/$_GCP_APP_NAME:latest',
-      '--set-env-vars', 'DBT_PROJECT_DIR=${_DBT_PROJECT_DIR}',
       '--set-env-vars', 'BQ_PROJECT_ID=${_GCP_PROJECT_ID}',
       '--set-env-vars', 'DBT_PROJECT_ID=${_DBT_PROJECT_ID}',
       '--set-env-vars', 'GOOGLE_APPLICATION_CREDENTIALS=${_DBT_SERVICE_ACCOUNT}',

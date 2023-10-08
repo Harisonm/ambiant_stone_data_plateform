@@ -7,7 +7,7 @@ COPY . ./
 # allow statements and log message to immediately appear in the Knative logs
 ENV PYTHONUNBUFFERED True
 # Install production dependencies.
-RUN pip install --no-cache-dir -r requirements.txt
+RUN pip install --no-cache-dir -r 2-dbt/requirements.txt
 
 FROM python:3.10.7-slim-buster
 USER root
@@ -17,7 +17,7 @@ COPY --from=builder /app ./
 RUN pip install --upgrade pip
 COPY ./requirements.txt .
 
-RUN pip install --no-cache-dir -r requirements.txt
+RUN pip install --no-cache-dir -r 2-dbt/requirements.txt
 # copy project
 COPY . .
 
