@@ -14,7 +14,7 @@ dbt run --target prod --profiles-dir profiles/big_query
 dbt test --data --target dev --profiles-dir profiles/big_query
 
 # Run dbt from cloud run
-gcloud beta run jobs execute ambiant-stone-dbt-p --region europe-west1 --args="run --profiles-dir "profiles/big_query""
+gcloud beta run jobs execute ambiant-stone-dbt-p --region europe-west1 --args="run" --args="--profiles-dir" --args="profiles/big_query"
 
 gcloud beta run jobs execute ambiant-stone-dbt-p --region europe-west1 --args="run"
 
