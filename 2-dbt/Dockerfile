@@ -20,6 +20,9 @@ COPY 2-dbt/requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 # copy project
 COPY 2-dbt .
+ARG GOOGLE_APPLICATION_CREDENTIALS
+ENV GOOGLE_APPLICATION_CREDENTIALS=${GOOGLE_APPLICATION_CREDENTIALS}
 
+RUN echo $GOOGLE_APPLICATION_CREDENTIALS > service-account.json
 # RUN ["dbt", "deps"]
 ENTRYPOINT ["dbt"]
